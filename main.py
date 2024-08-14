@@ -7,7 +7,7 @@ def check_dependencies():
     import sys
     import subprocess
 
-    required_modules = ['csv']  # List all required modules here
+    required_modules = ['csv', 'matplotlib']  # List all required modules here
 
     for module in required_modules:
         try:
@@ -25,19 +25,28 @@ def check_dependencies():
 def main():
     # Check for dependencies
     check_dependencies()
-    
+
     # Import the required function after checking dependencies
     from coordinate_extractor import getCoordinateData
-
+    from plot_coordinates import plot_coordinates
+    
     # Define the path to the log file
     log_file_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\coord_log (1).log" # change depending on log file path
     
     # Call the function to get the coordinate data
     coordinate_data = getCoordinateData(log_file_path)
+    #print(coordinate_data)
     
-    # Print the resulting matrix of coordinate data
-    for row in coordinate_data:
-        print(row)
+    # Define the bounds for the graph
+    xLow = 18.00
+    xHigh = 25.00
+    yLow = 2.00
+    yHigh = 6.00
+    zLow = 0.75
+    zHigh = 1.50
+
+    # Plot the coordinates with the defined bounds
+    plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True, save_as_gif=False, gif_filename='animation.gif')
 
 if __name__ == '__main__':
     main()
