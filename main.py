@@ -46,7 +46,7 @@ def main():
     zHigh = 1.50
 
     # Plot the coordinates with the defined bounds
-    plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True, save_as_gif=False, gif_filename='animation.gif')
+    plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True)
 
 if __name__ == '__main__':
     main()
