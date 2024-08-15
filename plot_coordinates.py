@@ -27,6 +27,8 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, tog
 
     initial_time = time.time()
     initial_coordinate_time = float(coordinate_data[0][6])
+    dtPrevious = datetime.fromtimestamp(int(initial_coordinate_time))
+    text_obj = None
 
     # Metadata for the GIF
     metadata = dict(title='Tag Movement', artist='user')
@@ -70,12 +72,16 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, tog
             plots[serial_number] = [(plot, added_time) for plot, added_time in plots[serial_number] if current_time - added_time <= 1]
 
             # Display time in the top right corner
-            dt = datetime.fromtimestamp(timestamp)
-            ax.text(0.95, 0.95, dt.strftime('%Y-%m-%d %H:%M:%S'), transform=ax.transAxes, fontsize=12,
-                    verticalalignment='top', horizontalalignment='right')
+            dt = datetime.fromtimestamp(int(timestamp))
+            if (dt != dtPrevious):
+                if text_obj is not None:
+                    text_obj.remove()
+                text_obj = ax.text(0.95, 0.95, dt.strftime('%Y-%m-%d %H:%M:%S'), transform=ax.transAxes, fontsize=12,
+                        verticalalignment='top', horizontalalignment='right')
+                dtPrevious = dt
 
             # Grab the current frame for the GIF
             writer.grab_frame()
-            ax.cla()  # Clear the axis for the next frame
+            #ax.cla()  # Clear the axis for the next frame
 
     plt.close(fig)

@@ -21,7 +21,7 @@ def check_dependencies():
             except Exception as e:
                 print(f"Failed to install '{module}'. Please install it manually. Error: {e}")
                 sys.exit(1)  # Exit if installation fails
-
+    
 def main():
     # Check for dependencies
     check_dependencies()
