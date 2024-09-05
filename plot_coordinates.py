@@ -5,6 +5,7 @@ import time
 #from tag import Tag, predefined_tags
 import matplotlib.colors as mcolors
 import numpy as np
+import os
 
 def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=False):
     """
@@ -33,8 +34,8 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, tog
     # Metadata for the GIF
     metadata = dict(title='Tag Movement', artist='user')
     writer = animation.PillowWriter(fps=10, metadata=metadata)
-    gif_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\plot_animation.gif"
-
+    gif_path = os.path.join(os.getcwd(), "plot_animation.gif")
+    
     with writer.saving(fig, gif_path, 100):
         for data_point in coordinate_data:
             current_time = time.time()

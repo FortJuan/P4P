@@ -1,0 +1,38 @@
+{
+    "settings": {
+        "selected_data_set": "Dataset 2",
+        "selected_sequence": "Steelmaking Sequence"
+    },
+    "tags": {
+        "001AFC": {
+            "tag_type": "RFID",
+            "battery": 85.5,
+            "location": [
+                10,
+                20,
+                5
+            ],
+            "timestamp": "1722931547.770"
+        },
+        "002BFD": {
+            "tag_type": "NFC",
+            "battery": 90.0,
+            "location": [
+                15,
+                25,
+                5
+            ],
+            "timestamp": "1722931547.770"
+        },
+        "003CFE": {
+            "tag_type": "UHF",
+            "battery": 75.3,
+            "location": [
+                20,
+                30,
+                5
+            ],
+            "timestamp": "1722931547.770"
+        }
+    }
+}

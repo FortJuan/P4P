@@ -30,29 +30,40 @@ def main():
     from coordinate_extractor import getCoordinateData
     from plot_coordinates import plot_coordinates
     from tag import Tag
-    from TagManager import TagManager
+    from tag_manager import TagManager
+    import os
     
     
     # Define the path to the log file
-    log_file_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\coord_log (1).log" # change depending on log file path
-    
+    #log_file_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\coord_log (1).log" # change depending on log file path
+    log_file_path = os.path.join(os.getcwd(), "coord_log (1).log")
     # Call the function to get the coordinate data
+    print(log_file_path)
     coordinate_data = getCoordinateData(log_file_path)
     #print(coordinate_data)
     
-    # Add current tag data
-    tag_manager = TagManager('tags.json')
+    # Add current JSON data
+    tag_manager = TagManager('data.json')
+    
+    # Update settings if needed
+    tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
+
+    # Load updated settings
+    selected_data_set = tag_manager.data['settings'].get('selected_data_set', 'Default Dataset')
+    selected_sequence = tag_manager.data['settings'].get('selected_sequence', 'Default Sequence')
+    print(f"Loaded settings: DataSet - {selected_data_set}, Sequence - {selected_sequence}")
 
     # Create Tag instances
-    tag1 = Tag("RFID", "001AFC", 85.5, (10, 20, 5))
-    tag2 = Tag("NFC", "002BFD", 90.0, (15, 25, 5))
-    tag3 = Tag("UHF", "003CFE", 75.3, (20, 30, 5))
+    tag1 = Tag("RFID", "001AFC", 85.5, (10, 20, 5), coordinate_data[0][6])
+    tag2 = Tag("NFC", "002BFD", 90.0, (15, 25, 5), coordinate_data[0][6])
+    tag3 = Tag("UHF", "003CFE", 75.3, (20, 30, 5), coordinate_data[0][6])
 
+    print("\nI addded a path\n")
     # Add tags to the manager (and save to JSON)
     tag_manager.add_or_update_tag(tag1)
     tag_manager.add_or_update_tag(tag2)
     tag_manager.add_or_update_tag(tag3)
-    
+    print("\nI finished updating JSON file\n")
     # Define the bounds for the graph
     xLow = 18.00
     xHigh = 25.00
