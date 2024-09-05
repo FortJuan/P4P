@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
 import time
-from tag import Tag, predefined_tags
+#from tag import Tag, predefined_tags
 import matplotlib.colors as mcolors
 import numpy as np
 

@@ -1,0 +1,42 @@
+import json
+import threading
+import time
+from pathlib import Path
+import tag
+
+class TagManager:
+    def __init__(self, file_path):
+        self.file_path = Path(file_path)
+        self.tags = self.load_tags()
+        self.lock = threading.Lock()
+        self.last_save_time = time.time()
+
+    def load_tags(self):
+        if self.file_path.exists():
+            with open(self.file_path, 'r') as file:
+                return json.load(file)
+        else:
+            return {}
+
+    def save_tags(self):
+        with self.lock:
+            with open(self.file_path, 'w') as file:
+                json.dump(self.tags, file, indent=4)
+
+    def add_or_update_tag(self, tag):
+        with self.lock:
+            self.tags[tag.tag_id] = {
+                'tag_type': tag.get_tag_type(),
+                'battery': tag.get_battery(),
+                'location': tag.get_location(),
+                'timestamp': tag.get_timestamp()
+            }
+            current_time = time.time()
+            if current_time - self.last_save_time >= 0.1:
+                self.save_tags()
+                self.last_save_time = current_time
+
+# Usage example
+tag_manager = TagManager('tags.json')
+# Assuming 'tag' is an instance of the Tag class
+tag_manager.add_or_update_tag(tag)
