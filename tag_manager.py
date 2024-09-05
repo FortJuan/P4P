@@ -18,9 +18,9 @@ class TagManager:
                 try:
                     return json.load(file)
                 except json.JSONDecodeError:
-                    return {"settings": {}, "tags": {}}  # Return an empty dictionary if JSON is corrupted
+                    return {"settings": {}, "tags": {}, "alerts": []}  # Return an empty dictionary if JSON is corrupted
         else:
-            return {"settings": {}, "tags": {}}
+            return {"settings": {}, "tags": {}, "alerts": []}
 
     def save_data(self):
         with self.lock:
@@ -44,9 +44,22 @@ class TagManager:
             #if current_time - self.last_save_time >= 0.1:
             #    self.save_data()
             #    self.last_save_time = current_time
+            
     def update_settings(self, selected_data_set=None, selected_sequence=None):
         if selected_data_set is not None:
             self.data['settings']['selected_data_set'] = selected_data_set
         if selected_sequence is not None:
             self.data['settings']['selected_sequence'] = selected_sequence
         self.save_data()
+    
+    def add_alert(self, alert_name, alert_message, timestamp):
+        #with self.lock:
+            # Ensure 'alerts' key exists
+            if 'alerts' not in self.data:
+                self.data['alerts'] = []
+            self.data['alerts'].append({
+                "name": alert_name,
+                "message": alert_message,
+                "timestamp": timestamp
+            })
+            self.save_data()
