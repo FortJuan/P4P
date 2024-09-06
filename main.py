@@ -21,6 +21,20 @@ def check_dependencies():
             except Exception as e:
                 print(f"Failed to install '{module}'. Please install it manually. Error: {e}")
                 sys.exit(1)  # Exit if installation fails
+
+def remove_row_by_index(coordinate_data, index):
+    """
+    Removes a row from the coordinate data at the specified index.
+
+    Args:
+    coordinate_data (list of lists): The matrix containing the coordinate data.
+    index (int): The index of the row to be removed.
+    """
+    if index < len(coordinate_data):
+        del coordinate_data[index]  # or coordinate_data.pop(index)
+    else:
+        print("Index out of range")
+
     
 def main():
     # Check for dependencies
@@ -29,6 +43,8 @@ def main():
     # Import the required function after checking dependencies
     from coordinate_extractor import getCoordinateData
     from plot_coordinates import plot_coordinates
+    from datetime import datetime
+    import time
     from tag import Tag
     from tag_manager import TagManager
     import os
@@ -64,6 +80,7 @@ def main():
     tag_manager.add_or_update_tag(tag2)
     tag_manager.add_or_update_tag(tag3)
     
+    tag_manager.remove_alerts()
     tag_manager.add_alert("Hazard Alert", "Violation of crane seperation", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
     # Define the bounds for the graph
@@ -73,9 +90,29 @@ def main():
     yHigh = 6.00
     zLow = 0.75
     zHigh = 1.50
+    
+    
+    # Beginning of the actual plotting:
+    initial_time = time.time()
+    print(initial_time)
+    initial_coordinate_time = float(coordinate_data[0][6])
+    print(initial_coordinate_time)
+    time_offset = initial_time - initial_coordinate_time
 
     # Plot the coordinates with the defined bounds
-    plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True)
+    while (len(coordinate_data) > 1):
+        current_time = time.time()
+        time_diff = current_time - initial_time
+        coordinate_time_diff = coordinate_data[0][6] - initial_coordinate_time
+        while ((time_diff-coordinate_time_diff) > 1):
+            remove_row_by_index(coordinate_data, 0) # Remove the first row of coordinate data
+            coordinate_time_diff = coordinate_data[0][6] - initial_coordinate_time
+            
+        
+        # Plot a single plot with the updated coordinate data
+        plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True)
+        input("Press Enter to continue...")
+        break
 
 if __name__ == '__main__':
     main()

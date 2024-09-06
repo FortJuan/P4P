@@ -62,4 +62,16 @@ class TagManager:
                 "message": alert_message,
                 "timestamp": timestamp
             })
+            self.purge_old_alerts()
+            self.save_data()
+    
+    def purge_old_alerts(self):
+        # Sort the alerts by timestamp in descending order
+        self.data['alerts'].sort(key=lambda x: x['timestamp'], reverse=True)
+        # Keep only the 10 most recent
+        self.data['alerts'] = self.data['alerts'][:10]
+
+    def remove_alerts(self):
+        #with self.lock:
+            self.data['alerts'] = []
             self.save_data()
