@@ -100,19 +100,19 @@ def main():
     time_offset = initial_time - initial_coordinate_time
 
     # Plot the coordinates with the defined bounds
-    while (len(coordinate_data) > 1):
+    while (len(coordinate_data) > 4):
         current_time = time.time()
         time_diff = current_time - initial_time
-        coordinate_time_diff = coordinate_data[0][6] - initial_coordinate_time
-        while ((time_diff-coordinate_time_diff) > 1):
+        coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
+        while ((time_diff-coordinate_time_diff) > 1.5):
             remove_row_by_index(coordinate_data, 0) # Remove the first row of coordinate data
-            coordinate_time_diff = coordinate_data[0][6] - initial_coordinate_time
-            
+            print("Removed row")
+            coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
         
         # Plot a single plot with the updated coordinate data
-        plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, toggle_names=True)
+        plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=True)
         input("Press Enter to continue...")
-        break
+        #break
 
 if __name__ == '__main__':
     main()

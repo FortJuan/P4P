@@ -33,6 +33,54 @@
                 5
             ],
             "timestamp": "1722931547.770"
+        },
+        "19.49": {
+            "tag_type": "0x000EBC",
+            "battery": 5.58,
+            "location": 1.08,
+            "timestamp": 1722931547.87
+        },
+        "19.97": {
+            "tag_type": "0x000EBC",
+            "battery": 2.44,
+            "location": 1.33,
+            "timestamp": 1722931553.734
+        },
+        "21.54": {
+            "tag_type": "0x000EBC",
+            "battery": 3.23,
+            "location": 1.2,
+            "timestamp": 1722931558.425
+        },
+        "24.27": {
+            "tag_type": "0x000EBC",
+            "battery": 5.39,
+            "location": 1.22,
+            "timestamp": 1722931564.191
+        },
+        "23.45": {
+            "tag_type": "0x000EBC",
+            "battery": 3.93,
+            "location": 1.3,
+            "timestamp": 1722931567.71
+        },
+        "21.82": {
+            "tag_type": "0x000EBC",
+            "battery": 2.76,
+            "location": 1.31,
+            "timestamp": 1722931570.935
+        },
+        "21.44": {
+            "tag_type": "0x000EBC",
+            "battery": 5.6,
+            "location": 1.01,
+            "timestamp": 1722931573.966
+        },
+        "21.03": {
+            "tag_type": "0x000EBC",
+            "battery": 4.2,
+            "location": 1.19,
+            "timestamp": 1722931576.994
         }
     },
     "alerts": [
