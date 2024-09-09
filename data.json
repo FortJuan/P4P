@@ -5,7 +5,7 @@
     },
     "tags": {
         "001AFC": {
-            "tag_type": "RFID",
+            "tag_type": "Forklift",
             "battery": 85.5,
             "location": [
                 10,
@@ -15,7 +15,7 @@
             "timestamp": "1722931547.770"
         },
         "002BFD": {
-            "tag_type": "NFC",
+            "tag_type": "Operator",
             "battery": 90.0,
             "location": [
                 15,
@@ -25,7 +25,7 @@
             "timestamp": "1722931547.770"
         },
         "003CFE": {
-            "tag_type": "UHF",
+            "tag_type": "Crane",
             "battery": 75.3,
             "location": [
                 20,
@@ -37,22 +37,22 @@
         "50": {
             "tag_type": "0x000EBC",
             "battery": [
-                21.58,
-                4.58,
-                1.1
+                19.46,
+                5.47,
+                1.17
             ],
-            "location": 1722931573.085,
-            "timestamp": 1725865520.2003107
+            "location": 1722931579.829,
+            "timestamp": 1725869497.5062032
         },
-        "50": {
-            "tag_type": "0x000EBC",
-            "battery": [
-                21.18,
-                4.51,
-                1.13
+        "0x000EBC": {
+            "tag_type": "Forklift",
+            "battery": 50,
+            "location": [
+                19.54,
+                5.78,
+                1.2
             ],
-            "location": 1722931576.507,
-            "timestamp": 1725865523.6321666
+            "timestamp": 1722931580.317
         }
     },
     "alerts": [

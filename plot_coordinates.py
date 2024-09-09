@@ -29,7 +29,6 @@ def load_json_data(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
 
-
 def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=False):
     """
     Plot tag coordinates on a 2D graph with real-time animation and save as a GIF.
@@ -41,7 +40,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     zLow, zHigh (float): Bounds for the Z-axis to color gradient.
     toggle_names (bool): Toggle to show/hide tag names on the plot.
     """
-    # Instantiate Tag
+    # Instantiate Tag Manager
     tag_manager = TagManager('data.json')
     
     # Get relevant sequence data:
@@ -70,32 +69,28 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     uhPrevious = datetime.fromtimestamp(int(initial_time))
     text_obj = None
     
-    for data_point in coordinate_data:
-        serial_number, x, y, z, timestamp = data_point[1], float(data_point[2]), float(data_point[3]), float(data_point[4]), float(data_point[6])
+    #for data_point in coordinate_data:
+    #    serial_number, x, y, z, timestamp = data_point[1], float(data_point[2]), float(data_point[3]), float(data_point[4]), float(data_point[6])
 
-
-# Previous plot_coordinates implementation
-
-    # Metadata for the GIF
-    #metadata = dict(title='Tag Movement', artist='user')
-    #writer = animation.PillowWriter(fps=10, metadata=metadata)
-    #gif_path = os.path.join(os.getcwd(), "plot_animation.gif")
     current_time = time.time()
     
         
     for data_point in coordinate_data:
         current_time = time.time()
-        time_diff = current_time - initial_time
-        coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
+        #time_diff = current_time - initial_time
+        #coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
         serial_number, x, y, z, timestamp = data_point[1], float(data_point[2]), float(data_point[3]), float(data_point[4]), float(data_point[6])
 
         # Check if the data point falls within the display bounds
         if not (xLow <= x <= xHigh and yLow <= y <= yHigh):
             continue
 
-        time_diff = current_time - initial_time
-        coordinate_time_diff = timestamp - initial_coordinate_time
-        time_since_added = time_diff - coordinate_time_diff
+        # Let's say it has been 14 seconds since we started plotting,
+        # The current point we are looking it has only been 13 seconds since starting
+        # Therefore, we are looking at a point that should have been plotted 1 second ago.
+        time_diff = current_time - initial_time # E.g: 17-3=14
+        coordinate_time_diff = timestamp - initial_coordinate_time # E.g: 15-2=13
+        time_since_added = time_diff - coordinate_time_diff # E.g 14-13=1
 
         # Normalize z for color gradient and create scatter plot
         color_value = (z - zLow) / (zHigh - zLow)
@@ -104,12 +99,12 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
 
         if serial_number not in plots:
             plots[serial_number] = []
-        plots[serial_number].append((scatter_plot, current_time))
+        plots[serial_number].append((scatter_plot, timestamp))
         #print('ADDED POINT \n')
 
         # Iterate through all points for the current tag and fade/remove old ones
         for plot, added_time in plots[serial_number]:
-            elapsed_time = current_time - added_time
+            elapsed_time = timestamp - added_time
             alpha = max(0, 1 - elapsed_time)  # Fade out over 1 second
             plot.set_alpha(alpha)
 
@@ -118,7 +113,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                 #print('****REMOVED POINT\n')
 
         # Remove entries that have been fully removed from the screen
-        plots[serial_number] = [(plot, added_time) for plot, added_time in plots[serial_number] if current_time - added_time <= 1]
+        plots[serial_number] = [(plot, added_time) for plot, added_time in plots[serial_number] if timestamp - added_time <= 1]
 
         # Display time in the top right corner
         dt = datetime.fromtimestamp(int(timestamp))
@@ -129,12 +124,17 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                     verticalalignment='top', horizontalalignment='right')
             dtPrevious = dt
 
-        if (((time_diff-coordinate_time_diff) < 0.1)):
+        if ((time_since_added < 0.1)): # This makes sure you are updating the JSON file with the new tag info
+            
+            tag_type = tag_manager.get_tag_type(serial_number)
+            
             # Create a new Tag instance
-            tag = Tag(serial_number, 50, (x, y, z), timestamp)
+            tag = Tag(tag_type, serial_number, 50, (x, y, z), timestamp)
+            
             # Update the tag in the JSON file
             tag_manager.add_or_update_tag(tag)
-            break
+            break # Don't look at future data just yet, therefore break
+        
         # Grab the current frame for the GIF
         #writer.grab_frame()
         #ax.cla()  # Clear the axis for the next frame

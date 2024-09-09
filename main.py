@@ -70,9 +70,9 @@ def main():
     print(f"Loaded settings: DataSet - {selected_data_set}, Sequence - {selected_sequence}")
 
     # Create Tag instances
-    tag1 = Tag("RFID", "001AFC", 85.5, (10, 20, 5), coordinate_data[0][6])
-    tag2 = Tag("NFC", "002BFD", 90.0, (15, 25, 5), coordinate_data[0][6])
-    tag3 = Tag("UHF", "003CFE", 75.3, (20, 30, 5), coordinate_data[0][6])
+    tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
+    tag2 = Tag("Operator", "002BFD", 90.0, (15, 25, 5), coordinate_data[0][6])
+    tag3 = Tag("Crane", "003CFE", 75.3, (20, 30, 5), coordinate_data[0][6])
 
     print("\nI addded a path\n")
     # Add tags to the manager (and save to JSON)
@@ -106,7 +106,7 @@ def main():
         coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
         while ((time_diff-coordinate_time_diff) > 1.5):
             remove_row_by_index(coordinate_data, 0) # Remove the first row of coordinate data
-            print("Removed row")
+            #print("Removed row")
             coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
         
         # Plot a single plot with the updated coordinate data

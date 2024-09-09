@@ -52,6 +52,10 @@ class TagManager:
             self.data['settings']['selected_sequence'] = selected_sequence
         self.save_data()
     
+    def get_tag_type(self, serial_number):
+        """Retrieve the tag type for a given serial number."""
+        return self.data['tags'].get(serial_number, {}).get('tag_type', None)
+    
     def add_alert(self, alert_name, alert_message, timestamp):
         #with self.lock:
             # Ensure 'alerts' key exists
