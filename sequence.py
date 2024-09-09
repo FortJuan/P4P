@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Geofence:
-    def __init__(self, name: str, quadrilaterals: list, background_image: str):
+    def __init__(self, quadrilaterals: list, colour: str):
         """
         Initialize the Geofence with a name, list of quadrilateral coordinates, and background image path.
         
@@ -10,9 +10,8 @@ class Geofence:
         :param quadrilaterals: List of quadrilaterals, where each quadrilateral is a list of four (x, y) tuples.
         :param background_image: Path to the background image.
         """
-        self.name = name
         self.quadrilaterals = quadrilaterals
-        self.background_image = background_image
+        self.colour = colour
 
         # Validate the provided quadrilaterals
         self.validate_quadrilaterals()
@@ -48,18 +47,18 @@ class Geofence:
 
         return True
     
-    def plot(self, ax, opacity):
+    def plot(self, ax, opacity, colour):
         for quadrilateral in self.quadrilaterals:
-            poly = plt.Polygon(quadrilateral, closed=True, fill=True, color='blue', alpha=opacity)
+            poly = plt.Polygon(quadrilateral, closed=True, fill=True, color=colour, alpha=opacity)
             ax.add_patch(poly)
     
 class Sequence:
-    def __init__(self, name, geofence_coordinates):
+    def __init__(self, name, geofence_coordinates, colour):
         self.name = name
-        self.geofence = Geofence(geofence_coordinates)
+        self.geofence = Geofence(geofence_coordinates, colour)
     
-    def plot_geofence(self, ax, opacity):
-        self.geofence.plot(ax, opacity)
+    def plot_geofence(self, ax, opacity, colour):
+        self.geofence.plot(ax, opacity, colour)
 
     def check_hazards(self, tag_data):
         # Placeholder for complex hazard checking logic
@@ -69,7 +68,6 @@ class Sequence:
         # This method would interact with the JSON data structure to add alerts
         alert = {"name": alert_name, "message": alert_message, "timestamp": timestamp}
         # Assuming data is a dictionary loaded from JSON where alerts are stored
-        data['alerts'].append(alert)
         # Function to save the updated data back to JSON would be called here
 
 # Example usage

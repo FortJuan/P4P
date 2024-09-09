@@ -5,9 +5,30 @@ import time
 #from tag import Tag, predefined_tags
 import matplotlib.colors as mcolors
 from tag_manager import TagManager
+from sequence import Sequence
 from tag import Tag
 import numpy as np
 import os
+import json
+
+def get_sequence_data(data, sequence_name, dataset_name):
+    # Extracting the path for the dataset
+    dataset_path = data['data_set'][dataset_name]['path'] if dataset_name in data['data_set'] else None
+
+    # Extracting quadrilaterals and colour for the sequence
+    if sequence_name in data['sequence']:
+        sequence_info = data['sequence'][sequence_name]
+        quadrilaterals = [tuple(tuple(coord) for coord in quad) for quad in sequence_info['quadrilaterals']]
+        colour = sequence_info['colour']
+    else:
+        quadrilaterals, colour = None, None
+
+    return dataset_path, quadrilaterals, colour
+
+def load_json_data(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
 
 def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=False):
     """
@@ -23,10 +44,22 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     # Instantiate Tag
     tag_manager = TagManager('data.json')
     
+    # Get relevant sequence data:
+    file_path = os.path.join(os.getcwd(), "sequence_data.json")
+    sequence_data = load_json_data(file_path)
+    selected_data_set = tag_manager.data['settings'].get('selected_data_set', 'Default Dataset')
+    selected_sequence = tag_manager.data['settings'].get('selected_sequence', 'Default Sequence')
+    path, quadrilaterals, colour = get_sequence_data(sequence_data, selected_sequence, selected_data_set)
+    
+    # Create Current Sequence:
+    current_sequence = Sequence(selected_sequence, quadrilaterals, colour)
+    
     fig, ax = plt.subplots()
 
     ax.set_xlim(xLow, xHigh)
     ax.set_ylim(yLow, yHigh)
+    
+    current_sequence.plot_geofence(ax, 0.5, colour)
 
     # Dictionary to store plot objects and their times
     plots = {}
@@ -98,7 +131,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
 
         if (((time_diff-coordinate_time_diff) < 0.1)):
             # Create a new Tag instance
-            tag = Tag(serial_number, x, y, z, timestamp)
+            tag = Tag(serial_number, 50, (x, y, z), timestamp)
             # Update the tag in the JSON file
             tag_manager.add_or_update_tag(tag)
             break
