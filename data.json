@@ -48,11 +48,11 @@
             "tag_type": "Forklift",
             "battery": 50,
             "location": [
-                19.54,
-                5.78,
-                1.2
+                19.75,
+                5.98,
+                1.17
             ],
-            "timestamp": 1722931580.317
+            "timestamp": 1722931580.903
         }
     },
     "alerts": [

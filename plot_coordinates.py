@@ -6,8 +6,10 @@ import time
 import matplotlib.colors as mcolors
 from tag_manager import TagManager
 from sequence import Sequence
+from PIL import Image
 from tag import Tag
 import numpy as np
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import os
 import json
 
@@ -28,6 +30,43 @@ def get_sequence_data(data, sequence_name, dataset_name):
 def load_json_data(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
+    
+def plot_icons(ax, tag_type, x, y, zoom=0.05):
+    """
+    Plots an icon on a given axis based on tag_type at specified (x, y) coordinates with a given zoom level.
+
+    Parameters:
+    - ax (matplotlib.axes.Axes): The axis on which to plot the icons.
+    - tag_type (str): The type of the tag (e.g., 'Forklift', 'Crane', 'Operator').
+    - x (float): The x-coordinate for the icon placement.
+    - y (float): The y-coordinate for the icon placement.
+    - zoom (float): The zoom level for the icon size.
+    """
+
+    # Define the media file path
+    media_file_path = os.path.join(os.getcwd(), "./media")
+
+    # Dictionary to hold paths for different tag types
+    icon_paths = {
+        'Forklift': os.path.join(media_file_path, 'forklift.png'),
+        'Crane': os.path.join(media_file_path, 'crane.png'),
+        'Operator': os.path.join(media_file_path, 'operator.png')
+    }
+
+    # Check if the provided tag_type is in the predefined dictionary
+    if tag_type not in icon_paths:
+        raise ValueError(f"Invalid tag_type: {tag_type}. Choose from {list(icon_paths.keys())}.")
+
+    # Load the appropriate icon image
+    icon_path = icon_paths[tag_type]
+    icon_image = Image.open(icon_path)
+
+    # Create an OffsetImage for the icon
+    imagebox = OffsetImage(icon_image, zoom=zoom)
+
+    # Place the icon at the given coordinates on the provided axis
+    ab = AnnotationBbox(imagebox, (x, y), frameon=False)
+    ax.add_artist(ab)
 
 def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=False):
     """
@@ -43,6 +82,11 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     # Instantiate Tag Manager
     tag_manager = TagManager('data.json')
     
+    # Define the media files directory path
+    media_file_path = os.path.join(os.getcwd(), "./media")
+    bg_image_path = os.path.join(media_file_path, 'background_test.jpg')  # Update with your background image path
+    bg_image = Image.open(bg_image_path)
+    
     # Get relevant sequence data:
     file_path = os.path.join(os.getcwd(), "sequence_data.json")
     sequence_data = load_json_data(file_path)
@@ -55,8 +99,12 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     
     fig, ax = plt.subplots()
 
+    ax.imshow(bg_image, extent=[xLow, xHigh, yLow, yHigh], aspect='auto', alpha=0.5)
+
     ax.set_xlim(xLow, xHigh)
     ax.set_ylim(yLow, yHigh)
+    
+    
     
     current_sequence.plot_geofence(ax, 0.5, colour)
 
@@ -115,21 +163,22 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
         # Remove entries that have been fully removed from the screen
         plots[serial_number] = [(plot, added_time) for plot, added_time in plots[serial_number] if timestamp - added_time <= 1]
 
-        # Display time in the top right corner
-        dt = datetime.fromtimestamp(int(timestamp))
-        if (dt != dtPrevious):
-            if text_obj is not None:
-                text_obj.remove()
-            text_obj = ax.text(0.95, 0.95, dt.strftime('%Y-%m-%d %H:%M:%S'), transform=ax.transAxes, fontsize=12,
-                    verticalalignment='top', horizontalalignment='right')
-            dtPrevious = dt
-
         if ((time_since_added < 0.1)): # This makes sure you are updating the JSON file with the new tag info
+            # Display time in the top right corner
+            dt = datetime.fromtimestamp(int(timestamp))
+            if (dt != dtPrevious):
+                if text_obj is not None:
+                    text_obj.remove()
+                text_obj = ax.text(0.95, 0.95, dt.strftime('%Y-%m-%d %H:%M:%S'), transform=ax.transAxes, fontsize=12,
+                    verticalalignment='top', horizontalalignment='right')
             
             tag_type = tag_manager.get_tag_type(serial_number)
             
             # Create a new Tag instance
             tag = Tag(tag_type, serial_number, 50, (x, y, z), timestamp)
+            
+            # Plot the icon of the tag type at the correct location
+            plot_icons(ax, tag_type, x, y, zoom=0.03)
             
             # Update the tag in the JSON file
             tag_manager.add_or_update_tag(tag)

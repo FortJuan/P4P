@@ -107,8 +107,10 @@ def main():
         while ((time_diff-coordinate_time_diff) > 1.5):
             remove_row_by_index(coordinate_data, 0) # Remove the first row of coordinate data
             #print("Removed row")
-            coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
-        
+            if (len(coordinate_data) > 0):
+                coordinate_time_diff = float(coordinate_data[0][6]) - initial_coordinate_time
+            else:
+                break
         # Plot a single plot with the updated coordinate data
         plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=True)
         input("Press Enter to continue...")
