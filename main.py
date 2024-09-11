@@ -36,6 +36,57 @@ def remove_row_by_index(coordinate_data, index):
         print("Index out of range")
 
     
+def getCoordinateBounds(coordinate_data):
+    """
+    Calculates the minimum and maximum bounds for X, Y, and Z coordinates 
+    from a given matrix of coordinate data.
+
+    Args:
+    coordinate_data (list of lists): A matrix where each row contains data in the order:
+                                     [Sequence Number, Tag Serial Number, Position X, Position Y, Position Z, Information String, Calculation Timestamp]
+
+    Returns:
+    tuple: A tuple containing the minimum and maximum values for X, Y, and Z coordinates:
+           (xLow, xHigh, yLow, yHigh, zLow, zHigh)
+    """
+    # Initialize min and max bounds for X, Y, Z with None
+    xLow, xHigh = None, None
+    yLow, yHigh = None, None
+    zLow, zHigh = None, None
+
+    # Iterate through the coordinate data
+    for row in coordinate_data:
+        try:
+            # Extract X, Y, Z coordinates as floats
+            x = float(row[2])
+            y = float(row[3])
+            z = float(row[4])
+
+            # Update X bounds
+            if xLow is None or x < xLow:
+                xLow = x
+            if xHigh is None or x > xHigh:
+                xHigh = x
+
+            # Update Y bounds
+            if yLow is None or y < yLow:
+                yLow = y
+            if yHigh is None or y > yHigh:
+                yHigh = y
+
+            # Update Z bounds
+            if zLow is None or z < zLow:
+                zLow = z
+            if zHigh is None or z > zHigh:
+                zHigh = z
+
+        except ValueError:
+            # Ignore the row if coordinates are not valid floats
+            continue
+
+    # Return the bounds as a tuple
+    return xLow, xHigh, yLow, yHigh, zLow, zHigh
+
 def main():
     # Check for dependencies
     check_dependencies()
