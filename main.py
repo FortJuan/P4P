@@ -132,7 +132,7 @@ def main():
     tag_manager.add_or_update_tag(tag3)
     
     tag_manager.remove_alerts()
-    tag_manager.add_alert("Hazard Alert", "Violation of crane seperation", "2024-05-02T16:04:03Z")
+    tag_manager.add_alert("Hazard Alert", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
     # Define the bounds for the graph
     xLow = 18.00
