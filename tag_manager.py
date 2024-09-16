@@ -79,3 +79,12 @@ class TagManager:
         #with self.lock:
             self.data['alerts'] = []
             self.save_data()
+
+    def remove_tags(self):
+        """
+        Removes all tags from the JSON file.
+        """
+        # Clear the 'tags' dictionary
+        self.data['tags'] = {}
+        # Save the updated data to the file
+        self.save_data()

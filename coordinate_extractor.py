@@ -22,6 +22,10 @@ def getCoordinateData(log_file_path):
             
             # Check if the line starts with the expected log prefix
             if line.startswith('$PEKIO,COORD'):
+                # Check if the line contains the word "Math" and skip it if it does
+                if 'Math' in line:
+                    continue
+
                 # Split the line by commas to extract individual fields
                 fields = line.split(',')
 

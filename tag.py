@@ -1,5 +1,5 @@
 import time
-g(tag_type, serial_number, 50, (x, y, z), timestamp)
+
 class Tag:
     def __init__(self, tag_type: str, tag_id: str, battery: float, location: tuple, timestamp: float = None):
         """

@@ -103,7 +103,7 @@ def main():
     
     # Define the path to the log file
     #log_file_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\coord_log (1).log" # change depending on log file path
-    log_file_path = os.path.join(os.getcwd(), "coord_log (1).log")
+    log_file_path = os.path.join(os.getcwd(), "putty_optitrac1.log")
     # Call the function to get the coordinate data
     print(log_file_path)
     coordinate_data = getCoordinateData(log_file_path)
@@ -122,10 +122,12 @@ def main():
 
     # Create Tag instances
     tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
-    tag2 = Tag("Operator", "002BFD", 90.0, (15, 25, 5), coordinate_data[0][6])
-    tag3 = Tag("Crane", "003CFE", 75.3, (20, 30, 5), coordinate_data[0][6])
+    tag2 = Tag("Operator", "0x001A79", 90.0, (15, 25, 5), coordinate_data[0][6])
+    tag3 = Tag("Crane", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
 
     print("\nI addded a path\n")
+
+    tag_manager.remove_tags()
     # Add tags to the manager (and save to JSON)
     tag_manager.add_or_update_tag(tag1)
     tag_manager.add_or_update_tag(tag2)
@@ -134,6 +136,10 @@ def main():
     tag_manager.remove_alerts()
     tag_manager.add_alert("Hazard Alert", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
+
+    xLow, xHigh, yLow, yHigh, zLow, zHigh = getCoordinateBounds(coordinate_data)
+
+    """
     # Define the bounds for the graph
     xLow = 18.00
     xHigh = 25.00
@@ -141,6 +147,7 @@ def main():
     yHigh = 6.00
     zLow = 0.75
     zHigh = 1.50
+    """
     
     
     # Beginning of the actual plotting:
