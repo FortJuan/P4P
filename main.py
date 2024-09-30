@@ -87,6 +87,64 @@ def getCoordinateBounds(coordinate_data):
     # Return the bounds as a tuple
     return xLow, xHigh, yLow, yHigh, zLow, zHigh
 
+def stretchData(coordinateData, previous_range, new_range):
+    """
+    Rescales the X, Y, Z coordinates in coordinateData based on the given ranges.
+
+    Args:
+    coordinateData (list of lists): The coordinate data to be rescaled.
+                                    Format: [Sequence Number, Tag Serial Number, Position X, Position Y, Position Z, Information String, Calculation Timestamp]
+    previous_range (tuple): A 6-tuple with the previous min/max of X, Y, Z coordinates in the form: 
+                            (X_min, X_max, Y_min, Y_max, Z_min, Z_max).
+    new_range (tuple): A 6-tuple with the new min/max of X, Y, Z coordinates in the form: 
+                       (X_min, X_max, Y_min, Y_max, Z_min, Z_max).
+
+    Returns:
+    list of lists: A new list with rescaled coordinate data.
+    """
+    
+    def rescale(value, old_min, old_max, new_min, new_max):
+        """Rescale a value from one range to another."""
+        if old_max - old_min == 0:
+            return value  # Avoid division by zero, return the same value if the old range is zero
+        return ((value - old_min) / (old_max - old_min)) * (new_max - new_min) + new_min
+    
+    # Unpack previous and new ranges for readability
+    prev_x_min, prev_x_max, prev_y_min, prev_y_max, prev_z_min, prev_z_max = previous_range
+    new_x_min, new_x_max, new_y_min, new_y_max, new_z_min, new_z_max = new_range
+
+    # Initialize the new list for stretched data
+    stretchedCoordinateData = []
+
+    for row in coordinateData:
+        try:
+            # Extract X, Y, Z and convert them to floats
+            x = float(row[2])
+            y = float(row[3])
+            z = float(row[4])
+
+            # Rescale each coordinate
+            new_x = rescale(x, prev_x_min, prev_x_max, new_x_min, new_x_max)
+            new_y = rescale(y, prev_y_min, prev_y_max, new_y_min, new_y_max)
+            new_z = rescale(z, prev_z_min, prev_z_max, new_z_min, new_z_max)
+
+            # Append the updated row to the new dataset with the rescaled X, Y, Z
+            stretchedCoordinateData.append([
+                row[0],  # Sequence Number
+                row[1],  # Tag Serial Number
+                new_x,   # Rescaled Position X
+                new_y,   # Rescaled Position Y
+                new_z,   # Rescaled Position Z
+                row[5],  # Information String
+                row[6]   # Calculation Timestamp
+            ])
+
+        except (ValueError, IndexError):
+            # Skip rows where X, Y, Z are not valid (either missing or non-numeric)
+            continue
+
+    return stretchedCoordinateData
+
 def main():
     # Check for dependencies
     check_dependencies()
@@ -107,6 +165,26 @@ def main():
     # Call the function to get the coordinate data
     print(log_file_path)
     coordinate_data = getCoordinateData(log_file_path)
+    
+    previous_range = getCoordinateBounds(coordinate_data)
+    
+    new_range = 0.00,74.25,0.00,34.20,0.50,7.15
+    
+    coordinate_data = stretchData(coordinate_data,previous_range,new_range)
+    
+#xLow, xHigh, yLow, yHigh, zLow, zHigh
+    """
+    # Define the bounds for the graph
+    xLow = 18.00
+    xHigh = 25.00
+    yLow = 2.00
+    yHigh = 6.00
+    zLow = 0.75
+    zHigh = 1.50
+    """
+    xLow, xHigh, yLow, yHigh, zLow, zHigh = getCoordinateBounds(coordinate_data)
+    print(xLow, xHigh, yLow, yHigh, zLow, zHigh)
+    
     #print(coordinate_data)
     
     # Add current JSON data
@@ -122,8 +200,8 @@ def main():
 
     # Create Tag instances
     tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
-    tag2 = Tag("Operator", "0x001A79", 90.0, (15, 25, 5), coordinate_data[0][6])
-    tag3 = Tag("Crane", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
+    tag2 = Tag("Forklift", "0x001A79", 90.0, (15, 25, 5), coordinate_data[0][6])
+    tag3 = Tag("Forklift", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
 
     print("\nI addded a path\n")
 
@@ -137,17 +215,7 @@ def main():
     tag_manager.add_alert("Hazard Alert", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
 
-    xLow, xHigh, yLow, yHigh, zLow, zHigh = getCoordinateBounds(coordinate_data)
-
-    """
-    # Define the bounds for the graph
-    xLow = 18.00
-    xHigh = 25.00
-    yLow = 2.00
-    yHigh = 6.00
-    zLow = 0.75
-    zHigh = 1.50
-    """
+    
     
     
     # Beginning of the actual plotting:

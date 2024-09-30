@@ -15,24 +15,24 @@
             "timestamp": "1726451156.063"
         },
         "0x001A79": {
-            "tag_type": "Operator",
+            "tag_type": "Forklift",
             "battery": 50,
             "location": [
-                5.32,
-                -2.03,
-                1.03
+                36.18512658227848,
+                31.47547169811321,
+                4.046666666666665
             ],
-            "timestamp": 1726451289.635
+            "timestamp": 1726451307.244
         },
         "0x001A2C": {
-            "tag_type": "Crane",
+            "tag_type": "Forklift",
             "battery": 50,
             "location": [
-                5.68,
-                -2.0,
-                1.05
+                37.312974683544304,
+                31.833962264150948,
+                3.16
             ],
-            "timestamp": 1726451296.265
+            "timestamp": 1726451307.023
         }
     },
     "alerts": [

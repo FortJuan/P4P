@@ -84,7 +84,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     
     # Define the media files directory path
     media_file_path = os.path.join(os.getcwd(), "./media")
-    bg_image_path = os.path.join(media_file_path, 'background_test.jpg')  # Update with your background image path
+    bg_image_path = os.path.join(media_file_path, 'mapBackground.png')  # Update with your background image path
     bg_image = Image.open(bg_image_path)
     
     # Get relevant sequence data:
@@ -106,7 +106,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     
     
     
-    current_sequence.plot_geofence(ax, 0.5, colour)
+    current_sequence.plot_geofence(ax, 0.25, colour)
 
     # Dictionary to store plot objects and their times
     plots = {}
