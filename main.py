@@ -258,7 +258,7 @@ def main():
 
     # Create Tag instances
     tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
-    tag3 = Tag("Crane", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
+    tag3 = Tag("Operator", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
     tag2 = Tag("Crane", "0x001A79", 90.0, (15, 25, 5), coordinate_data[1][6])
     
 
@@ -308,10 +308,10 @@ def main():
         # Run the alarm checks based on the sequence
         alarm_manager.run_alarm_checks(sequence_name, tags, cranes, geofence_zones)
 
-        print(f"Sequence Name: {sequence_name}")
-        print(f"Tags: {tags}")
-        print(f"Cranes: {cranes}")
-        print(f"Geofence Zones: {geofence_zones}")
+        #print(f"Sequence Name: {sequence_name}")
+        #print(f"Tags: {tags}")
+        #print(f"Cranes: {cranes}")
+        #print(f"Geofence Zones: {geofence_zones}")
 
         input("Press Enter to continue...")
         #break

@@ -236,7 +236,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                 if tag_type == "Forklift":
                     zoom = 0.042
                 if tag_type == "Operator":
-                    zoom = 0.3
+                    zoom = 0.05
                 # Create a new Tag instance
                 tag = Tag(tag_type, serial, 50, (x_last, y_last, z_last), ts_last)
                 # Update the tag in the JSON file
