@@ -123,7 +123,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     
     fig, ax = plt.subplots()
 
-    ax.imshow(bg_image, extent=[xLow, xHigh, yLow, yHigh], aspect='auto', alpha=0.5)
+    ax.imshow(bg_image, extent=[xLow, xHigh, yLow, yHigh], aspect='auto', alpha=0.8)
 
     ax.set_xlim(xLow, xHigh)
     ax.set_ylim(yLow, yHigh)
