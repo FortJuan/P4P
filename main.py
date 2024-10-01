@@ -1,3 +1,5 @@
+from plot_coordinates import get_sequence_data  # Import the function from plot_coordinates.py
+import json
 
 def check_dependencies():
     """
@@ -21,6 +23,10 @@ def check_dependencies():
             except Exception as e:
                 print(f"Failed to install '{module}'. Please install it manually. Error: {e}")
                 sys.exit(1)  # Exit if installation fails
+
+def load_json_data(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
 def remove_row_by_index(coordinate_data, index):
     """
@@ -157,13 +163,36 @@ def main():
     from tag import Tag
     from tag_manager import TagManager
     import os
+
+    # Load the sequence data from the JSON file
+    file_path = os.path.join(os.getcwd(), "sequence_data.json")  # Path to your JSON file
+    sequence_data = load_json_data(file_path)
+
+    # Select the dataset and sequence (change these values to your actual selection)
+    selected_data_set = "Dataset 1"  # You can dynamically select this based on user input or logic
+    selected_sequence = "Steelmaking Sequence"  # Example sequence name
+
+    dataset_path, quadrilaterals, colour = get_sequence_data(sequence_data, selected_sequence, selected_data_set)
+
     
     
     # Define the path to the log file
     #log_file_path = r"C:\Users\juani\OneDrive\Desktop\MECHENG700\code\coord_log (1).log" # change depending on log file path
-    log_file_path = os.path.join(os.getcwd(), "putty_optitrac1.log")
+    log_file_path = os.path.join(os.getcwd(), dataset_path)
     # Call the function to get the coordinate data
     print(log_file_path)
+    
+    # Add current JSON data
+    tag_manager = TagManager('data.json')
+    
+    # Update settings if needed
+    tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
+
+    # Load updated settings
+    selected_data_set = tag_manager.data['settings'].get('selected_data_set', 'Default Dataset')
+    selected_sequence = tag_manager.data['settings'].get('selected_sequence', 'Default Sequence')
+    print(f"Loaded settings: DataSet - {selected_data_set}, Sequence - {selected_sequence}")
+
     coordinate_data = getCoordinateData(log_file_path)
     
     previous_range = getCoordinateBounds(coordinate_data)
@@ -187,16 +216,6 @@ def main():
     
     #print(coordinate_data)
     
-    # Add current JSON data
-    tag_manager = TagManager('data.json')
-    
-    # Update settings if needed
-    tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
-
-    # Load updated settings
-    selected_data_set = tag_manager.data['settings'].get('selected_data_set', 'Default Dataset')
-    selected_sequence = tag_manager.data['settings'].get('selected_sequence', 'Default Sequence')
-    print(f"Loaded settings: DataSet - {selected_data_set}, Sequence - {selected_sequence}")
 
     # Create Tag instances
     tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])

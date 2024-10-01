@@ -31,7 +31,7 @@ def plotCraneBarrier(ax, tag_id, tag_type, x, y, z, crane_plots):
             crane_plots[tag_id].remove()
 
         # Plot the new crane barrier (a circle with radius equal to the crane's Z-coordinate)
-        crane_circle = plt.Circle((x, y), radius=z, color='red', alpha=0.5, fill=True)
+        crane_circle = plt.Circle((x, y), radius=z, color='red', alpha=0.22, fill=True)
         ax.add_patch(crane_circle)
 
         # Store the new plot reference, keyed by tag_id
@@ -55,7 +55,7 @@ def load_json_data(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
     
-def plot_icons(ax, tag_type, x, y, zoom=0.05):
+def plot_icons(ax, tag_type, x, y, zoom):
     """
     Plots an icon on a given axis based on tag_type at specified (x, y) coordinates with a given zoom level.
 
@@ -228,17 +228,22 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                 print(f"Processing tag_id: {serial}, tag_type: {tag_type}")
                 # Ensure only "Crane" tag_type calls the function
                 if tag_type == "Crane":
+                    zoom = 0.15
                     print("Plotting Crane circle \n")
                     # If the tag is a crane, plot the crane barrier
                     plotCraneBarrier(ax, serial, tag_type, x_last, y_last, z_last, crane_plots)
 
+                if tag_type == "Forklift":
+                    zoom = 0.042
+                if tag_type == "Operator":
+                    zoom = 0.3
                 # Create a new Tag instance
                 tag = Tag(tag_type, serial, 50, (x_last, y_last, z_last), ts_last)
                 # Update the tag in the JSON file
                 tag_manager.add_or_update_tag(tag)
             
                 # Plot the icon of the tag type at the correct location
-                plot_icons(ax, tag_type, x_last, y_last, zoom=0.03)
+                plot_icons(ax, tag_type, x_last, y_last, zoom)
 
                 #plot_icons(ax, tag_type, x_last, y_last, zoom=0.03)  # Icon for the last known position
 
