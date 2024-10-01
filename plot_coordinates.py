@@ -13,6 +13,30 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import os
 import json
 
+# Helper function to plot crane barriers
+def plotCraneBarrier(ax, tag_id, tag_type, x, y, z, crane_plots):
+    """
+    Plots a red circle around the crane's position representing its barrier.
+
+    Parameters:
+    - ax (matplotlib.axes.Axes): The axis on which to plot.
+    - tag_id (str): The unique identifier for the tag.
+    - tag_type (str): The type of the tag (Crane).
+    - x, y, z (float): The X, Y coordinates and Z height of the crane.
+    - crane_plots (dict): A dictionary to track existing crane plots (keyed by tag_id).
+    """
+    if tag_type == "Crane":
+        # If this crane (tag_id) already has a circle, remove it first
+        if tag_id in crane_plots:
+            crane_plots[tag_id].remove()
+
+        # Plot the new crane barrier (a circle with radius equal to the crane's Z-coordinate)
+        crane_circle = plt.Circle((x, y), radius=z, color='red', alpha=0.5, fill=True)
+        ax.add_patch(crane_circle)
+
+        # Store the new plot reference, keyed by tag_id
+        crane_plots[tag_id] = crane_circle
+
 def get_sequence_data(data, sequence_name, dataset_name):
     # Extracting the path for the dataset
     dataset_path = data['data_set'][dataset_name]['path'] if dataset_name in data['data_set'] else None
@@ -111,6 +135,9 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     # Dictionary to store plot objects and their times
     plots = {}
 
+    # Dictionary to track crane barrier plots
+    crane_plots = {}
+
     #initial_time = time.time()
     #initial_coordinate_time = float(coordinate_data[0][6])
     dtPrevious = datetime.fromtimestamp(int(initial_coordinate_time))
@@ -121,6 +148,9 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
     #    serial_number, x, y, z, timestamp = data_point[1], float(data_point[2]), float(data_point[3]), float(data_point[4]), float(data_point[6])
 
     current_time = time.time()
+
+    # Dictionary to track the most recent instance of each tag
+    latest_tag_data = {}
     
         
     for data_point in coordinate_data:
@@ -150,6 +180,10 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
         plots[serial_number].append((scatter_plot, timestamp))
         #print('ADDED POINT \n')
 
+        # Store the latest instance of each tag in the dictionary
+        latest_tag_data[serial_number] = (x, y, z, timestamp, color)
+        
+
         # Iterate through all points for the current tag and fade/remove old ones
         for plot, added_time in plots[serial_number]:
             elapsed_time = timestamp - added_time
@@ -172,16 +206,43 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                 text_obj = ax.text(0.95, 0.95, dt.strftime('%Y-%m-%d %H:%M:%S'), transform=ax.transAxes, fontsize=12,
                     verticalalignment='top', horizontalalignment='right')
             
-            tag_type = tag_manager.get_tag_type(serial_number)
+            #tag_type = tag_manager.get_tag_type(serial_number)
             
             # Create a new Tag instance
-            tag = Tag(tag_type, serial_number, 50, (x, y, z), timestamp)
+            #tag = Tag(tag_type, serial_number, 50, (x, y, z), timestamp)
             
             # Plot the icon of the tag type at the correct location
-            plot_icons(ax, tag_type, x, y, zoom=0.03)
+            #plot_icons(ax, tag_type, x, y, zoom=0.03)
             
             # Update the tag in the JSON file
-            tag_manager.add_or_update_tag(tag)
+            #tag_manager.add_or_update_tag(tag)
+            #tag.get_tag_type(tag)
+
+            # Here, before breaking, process and plot the latest known instances of **all** tags
+            for serial, (x_last, y_last, z_last, ts_last, color_last) in latest_tag_data.items():
+                # Plot the last known position for each tag
+                ax.scatter(x_last, y_last, color=color_last, alpha=1.0)  # Scatter for last known tag position
+                tag_type = tag_manager.get_tag_type(serial)
+
+
+                print(f"Processing tag_id: {serial}, tag_type: {tag_type}")
+                # Ensure only "Crane" tag_type calls the function
+                if tag_type == "Crane":
+                    print("Plotting Crane circle \n")
+                    # If the tag is a crane, plot the crane barrier
+                    plotCraneBarrier(ax, serial, tag_type, x_last, y_last, z_last, crane_plots)
+
+                # Create a new Tag instance
+                tag = Tag(tag_type, serial, 50, (x_last, y_last, z_last), ts_last)
+                # Update the tag in the JSON file
+                tag_manager.add_or_update_tag(tag)
+            
+                # Plot the icon of the tag type at the correct location
+                plot_icons(ax, tag_type, x_last, y_last, zoom=0.03)
+
+                #plot_icons(ax, tag_type, x_last, y_last, zoom=0.03)  # Icon for the last known position
+
+
             break # Don't look at future data just yet, therefore break
         
         # Grab the current frame for the GIF
