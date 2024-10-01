@@ -198,6 +198,7 @@ def main():
     import time
     from tag import Tag
     from tag_manager import TagManager
+    from velocity import exportVelocity
     import os
 
     # Load the sequence data from the JSON file
@@ -239,6 +240,9 @@ def main():
     new_range = 0.00,74.25,0.00,34.20,0.50,7.15
     
     coordinate_data = stretchData(coordinate_data,previous_range,new_range)
+    
+    csv_output_path = os.path.join(os.getcwd(), "velocity_dataset_5.csv")
+    exportVelocity(coordinate_data, csv_output_path)
     
 #xLow, xHigh, yLow, yHigh, zLow, zHigh
     """
