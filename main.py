@@ -1,4 +1,5 @@
 from plot_coordinates import get_sequence_data  # Import the function from plot_coordinates.py
+from alarms import AlarmManager
 import json
 
 def check_dependencies():
@@ -23,6 +24,41 @@ def check_dependencies():
             except Exception as e:
                 print(f"Failed to install '{module}'. Please install it manually. Error: {e}")
                 sys.exit(1)  # Exit if installation fails
+
+def getFullSequenceData(data_json_path, sequence_json_path):
+    """
+    Extracts the sequence name, tags, cranes, and geofence zones by reading from data.json and sequence_data.json.
+
+    Parameters:
+    - data_json_path (str): Path to the data.json file.
+    - sequence_json_path (str): Path to the sequence_data.json file.
+
+    Returns:
+    - sequence_name (str): The selected sequence.
+    - tags (dict): A dictionary of all tags from data.json.
+    - cranes (list): A list of crane tags (filtered from tags).
+    - geofence_zones (list): A list of quadrilateral zones from sequence_data.json for the selected sequence.
+    """
+    
+    # Load data.json
+    with open(data_json_path, 'r') as data_file:
+        data = json.load(data_file)
+    
+    # Extract sequence name and tags from data.json
+    sequence_name = data['settings']['selected_sequence']
+    tags = data['tags']
+
+    # Filter out crane tags (where tag_type is "Crane")
+    cranes = [tag_info for tag_info in tags.values() if tag_info['tag_type'] == "Crane"]
+
+    # Load sequence_data.json
+    with open(sequence_json_path, 'r') as sequence_file:
+        sequence_data = json.load(sequence_file)
+
+    # Extract geofence zones for the selected sequence
+    geofence_zones = sequence_data['sequence'].get(sequence_name, {}).get('quadrilaterals', [])
+
+    return sequence_name, tags, cranes, geofence_zones
 
 def load_json_data(file_path):
     with open(file_path, 'r') as file:
@@ -181,6 +217,9 @@ def main():
     log_file_path = os.path.join(os.getcwd(), dataset_path)
     # Call the function to get the coordinate data
     print(log_file_path)
+
+    # Initialize the Alarm Manager
+    alarm_manager = AlarmManager()
     
     # Add current JSON data
     tag_manager = TagManager('data.json')
@@ -220,7 +259,7 @@ def main():
     # Create Tag instances
     tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
     tag3 = Tag("Crane", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
-    tag2 = Tag("Forklift", "0x001A79", 90.0, (15, 25, 5), coordinate_data[1][6])
+    tag2 = Tag("Crane", "0x001A79", 90.0, (15, 25, 5), coordinate_data[1][6])
     
 
     print("\nI addded a path\n")
@@ -259,6 +298,21 @@ def main():
                 break
         # Plot a single plot with the updated coordinate data
         plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=True)
+
+        # Reupdate sequence and tag information within main.py
+        data_json_path = os.path.join(os.getcwd(), "data.json")
+        sequence_json_path = os.path.join(os.getcwd(), "sequence_data.json")
+
+        sequence_name, tags, cranes, geofence_zones = getFullSequenceData(data_json_path, sequence_json_path)
+
+        # Run the alarm checks based on the sequence
+        alarm_manager.run_alarm_checks(sequence_name, tags, cranes, geofence_zones)
+
+        print(f"Sequence Name: {sequence_name}")
+        print(f"Tags: {tags}")
+        print(f"Cranes: {cranes}")
+        print(f"Geofence Zones: {geofence_zones}")
+
         input("Press Enter to continue...")
         #break
 

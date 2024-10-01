@@ -66,7 +66,7 @@ class TagManager:
                 "message": alert_message,
                 "timestamp": timestamp
             })
-            self.purge_old_alerts()
+            #self.purge_old_alerts()
             self.save_data()
     
     def purge_old_alerts(self):

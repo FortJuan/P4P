@@ -1,87 +1,103 @@
 class AlarmManager:
     def __init__(self):
-        # Nested dictionary to store active alarms (keyed by tag_id and alarm_type)
+        # Store active alarms to avoid duplicates (keyed by tag_id and alarm_type)
         self.active_alarms = {}
 
-    def check_in_red_zone(self, tag_id, x, y, red_zones):
+    def check_proximity(self, crane_a, crane_b, threshold=10.0):
         """
-        Check if the entity (forklift/operator) is within any red zone.
+        Check if two cranes are within the proximity threshold.
         """
-        for zone in red_zones:
-            if self.is_within_zone(x, y, zone):
-                return self.trigger_alarm(tag_id, "proximity", red_zone=True)
-        return self.reset_alarm(tag_id, "proximity")
-
-    def check_crane_proximity(self, crane_a, crane_b):
-        """
-        Check if two cranes are too close to each other (e.g., within a certain distance).
-        """
-        x_a, y_a, z_a = crane_a['coordinates']
-        x_b, y_b, z_b = crane_b['coordinates']
-        proximity_threshold = 10.0  # Define your proximity threshold here
-        
+        x_a, y_a, z_a = crane_a['location']
+        x_b, y_b, z_b = crane_b['location']
         distance = ((x_a - x_b) ** 2 + (y_a - y_b) ** 2) ** 0.5
-        if distance < proximity_threshold:
-            return self.trigger_alarm(crane_a['id'], "crane_proximity"), self.trigger_alarm(crane_b['id'], "crane_proximity")
-        return self.reset_alarm(crane_a['id'], "crane_proximity"), self.reset_alarm(crane_b['id'], "crane_proximity")
+        return distance < threshold
 
-    def check_geofence_alarm(self, tag_id, x, y, geofence_zones):
+    def check_geofence(self, tag, geofence_zones):
         """
-        Check if the entity is violating a geofence boundary.
+        Check if the tag is inside any geofence zones.
         """
+        x, y, _ = tag['location']
         for zone in geofence_zones:
             if self.is_within_zone(x, y, zone):
-                return self.trigger_alarm(tag_id, "geofence", geofence=True)
-        return self.reset_alarm(tag_id, "geofence")
+                return True
+        return False
+
+    def check_crane_zone(self, tag, cranes):
+        """
+        Check if the tag is within any crane's circular zone.
+        """
+        x, y, _ = tag['location']
+        for crane in cranes:  # Iterate over list of cranes
+            crane_x, crane_y, crane_z = crane['location']
+            distance = ((x - crane_x) ** 2 + (y - crane_y) ** 2) ** 0.5
+            if distance < crane_z:  # Circle radius is crane's height (z)
+                return True
+        return False
 
     def is_within_zone(self, x, y, zone):
         """
-        Check if (x, y) is within the given zone, which can be either a polygon (list of points)
-        or a circle (defined by center and radius).
-    
-        Parameters:
-        - x, y (float): Coordinates of the point to check.
-        - zone (tuple or list): The zone can either be:
-        1. A list of polygon vertices [(x1, y1), (x2, y2), ...]
-        2. A tuple representing a circle (center_x, center_y, radius)
-    
-        Returns:
-        - bool: True if the point is within the zone, False otherwise.
+        Check if (x, y) is within a quadrilateral zone.
         """
-        # Case 1: If the zone is a polygon (list of points)
-        if isinstance(zone, list):
-            from matplotlib.path import Path
-            polygon = Path(zone)
-            return polygon.contains_point((x, y))
+        from matplotlib.path import Path
+        polygon = Path(zone)
+        return polygon.contains_point((x, y))
 
-        # Case 2: If the zone is a circle (tuple with center and radius)
-        elif isinstance(zone, tuple) and len(zone) == 3:
-            center_x, center_y, radius = zone
-            distance = ((x - center_x) ** 2 + (y - center_y) ** 2) ** 0.5
-            return distance <= radius
-
-        return False
-
-    def trigger_alarm(self, tag_id, alarm_type, **kwargs):
+    def trigger_alarm(self, tag_id, alarm_type, message):
         """
-        Trigger an alarm if it hasn't already been triggered.
+        Trigger an alarm and avoid duplicate alarms.
         """
         if tag_id not in self.active_alarms:
             self.active_alarms[tag_id] = {}
 
         if alarm_type not in self.active_alarms[tag_id]:
-            # Alarm triggered for the first time
+            # Trigger the alarm for the first time
             self.active_alarms[tag_id][alarm_type] = True
-            print(f"Alarm triggered: {alarm_type} for tag: {tag_id}")
-            return True
-        return False  # Alarm was already active
+            print(f"ALARM: {message} for {tag_id}")
+            # Add code to send the alarm information, e.g., logging or sending notifications
+        return True
 
     def reset_alarm(self, tag_id, alarm_type):
         """
-        Reset the alarm if it was previously active.
+        Reset the alarm once the condition no longer applies.
         """
         if tag_id in self.active_alarms and alarm_type in self.active_alarms[tag_id]:
             del self.active_alarms[tag_id][alarm_type]
-            print(f"Alarm reset: {alarm_type} for tag: {tag_id}")
-            return True
-        return False
+
+    def run_alarm_checks(self, sequence_name, tags, cranes, geofence_zones):
+        """
+        Run all relevant alarm checks based on the sequence.
+        """
+        for tag_id, tag in tags.items():
+            tag_type = tag['tag_type']
+
+            # Sequence: Steelmaking Sequence
+            if sequence_name == "Steelmaking Sequence":
+                if tag_type in ["Operator", "Forklift"]:
+                    if self.check_geofence(tag, geofence_zones):
+                        self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
+                    if self.check_crane_zone(tag, cranes):
+                        self.trigger_alarm(tag_id, "crane_zone", "Entered crane zone")
+
+            # Sequence: Tandem Lift (cranes can be close)
+            elif sequence_name == "Tandem Lift":
+                if tag_type in ["Operator", "Forklift"]:
+                    if self.check_geofence(tag, geofence_zones):
+                        self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
+                    # No crane proximity alarms
+
+            # Sequence: Bricklayers Lift (operators can be in crane zone)
+            elif sequence_name == "Bricklayers Lift":
+                if tag_type == "Forklift":
+                    if self.check_geofence(tag, geofence_zones):
+                        self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
+                    if self.check_crane_zone(tag, cranes):
+                        self.trigger_alarm(tag_id, "crane_zone", "Entered crane zone")
+
+        # Check crane proximity if sequence allows
+        if sequence_name != "Tandem Lift":
+            # Check crane-to-crane proximity
+            for i, crane_a in enumerate(cranes):
+                for j, crane_b in enumerate(cranes):
+                    if i != j and self.check_proximity(crane_a, crane_b):
+                        self.trigger_alarm(i, "crane_proximity", "Crane proximity alert")
+                        self.trigger_alarm(j, "crane_proximity", "Crane proximity alert")
