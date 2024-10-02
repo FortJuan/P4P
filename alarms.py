@@ -74,6 +74,8 @@ class AlarmManager:
         """
         Run all relevant alarm checks based on the sequence.
         """
+        self.tag_manager.remove_alerts()
+        
         for tag_id, tag in tags.items():
             tag_type = tag['tag_type']
 
@@ -107,4 +109,4 @@ class AlarmManager:
                 for j, crane_b in enumerate(cranes):
                     if i != j and self.check_proximity(crane_a, crane_b):
                         self.trigger_alarm(i, "crane_proximity", "Crane proximity alert")
-                        self.trigger_alarm(j, "crane_proximity", "Crane proximity alert")
+                        self.trigger_alarm(j, "crane_proximity", "Crane proximity alert")                

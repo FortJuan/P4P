@@ -263,7 +263,7 @@ def main():
     
 
     # Create Tag instances
-    tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
+    #tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
     tag3 = Tag("Operator", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
     tag2 = Tag("Crane", "0x001A79", 90.0, (15, 25, 5), coordinate_data[1][6])
     
@@ -272,13 +272,13 @@ def main():
 
     tag_manager.remove_tags()
     # Add tags to the manager (and save to JSON)
-    tag_manager.add_or_update_tag(tag1)
+    #tag_manager.add_or_update_tag(tag1)
     tag_manager.add_or_update_tag(tag2)
     tag_manager.add_or_update_tag(tag3)
     
     tag_manager.remove_alerts()
-    tag_manager.add_alert(tag1.get_tag_id(),"Hazard Alert 1", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
-    tag_manager.add_alert(tag2.get_tag_id(),"Hazard Alert 2", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
+    #tag_manager.add_alert(tag1.get_tag_id(),"Hazard Alert 1", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
+    #tag_manager.add_alert(tag2.get_tag_id(),"Hazard Alert 2", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
 
     

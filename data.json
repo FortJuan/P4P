@@ -4,61 +4,26 @@
         "selected_sequence": "Steelmaking Sequence"
     },
     "tags": {
-        "0x000EBC": {
-            "tag_type": "Forklift",
-            "battery": 85.5,
-            "location": [
-                10,
-                20,
-                5
-            ],
-            "timestamp": "1726451156.063"
-        },
         "0x001A79": {
             "tag_type": "Crane",
-            "battery": 50,
+            "battery": 90.0,
             "location": [
-                57.802215189873415,
-                28.67924528301887,
-                4.194444444444443
+                15,
+                25,
+                5
             ],
-            "timestamp": 1726451244.944
+            "timestamp": "1726451156.120"
         },
         "0x001A2C": {
             "tag_type": "Operator",
-            "battery": 50,
+            "battery": 75.3,
             "location": [
-                53.948734177215194,
-                13.622641509433961,
-                4.637777777777776
+                20,
+                30,
+                5
             ],
-            "timestamp": 1726451244.862
+            "timestamp": "1726451156.063"
         }
     },
-    "alerts": [
-        {
-            "tag_id": "0x000EBC",
-            "name": "Hazard Alert 1",
-            "message": "Forklift entered restricted zone",
-            "timestamp": "2024-05-02T16:04:03Z"
-        },
-        {
-            "tag_id": "0x001A79",
-            "name": "Hazard Alert 2",
-            "message": "Forklift entered restricted zone",
-            "timestamp": "2024-05-02T16:04:03Z"
-        },
-        {
-            "tag_id": "0x000EBC",
-            "name": "geofence",
-            "message": "Entered geofence zone",
-            "timestamp": 1727867180.1669202
-        },
-        {
-            "tag_id": "0x001A2C",
-            "name": "geofence",
-            "message": "Entered geofence zone",
-            "timestamp": 1727867213.3219185
-        }
-    ]
+    "alerts": []
 }
