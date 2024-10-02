@@ -219,11 +219,13 @@ def main():
     # Call the function to get the coordinate data
     print(log_file_path)
 
-    # Initialize the Alarm Manager
-    alarm_manager = AlarmManager()
-    
     # Add current JSON data
     tag_manager = TagManager('data.json')
+
+    # Initialize the Alarm Manager
+    alarm_manager = AlarmManager(tag_manager)
+    
+    
     
     # Update settings if needed
     tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
@@ -275,7 +277,8 @@ def main():
     tag_manager.add_or_update_tag(tag3)
     
     tag_manager.remove_alerts()
-    tag_manager.add_alert("Hazard Alert", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
+    tag_manager.add_alert(tag1.get_tag_id(),"Hazard Alert 1", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
+    tag_manager.add_alert(tag2.get_tag_id(),"Hazard Alert 2", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")
     print("\nI finished updating JSON file\n")
 
     

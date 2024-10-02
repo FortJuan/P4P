@@ -1,7 +1,11 @@
+from tag_manager import TagManager
+import time
+
 class AlarmManager:
-    def __init__(self):
+    def __init__(self, tag_manager):
         # Store active alarms to avoid duplicates (keyed by tag_id and alarm_type)
         self.active_alarms = {}
+        self.tag_manager = tag_manager
 
     def check_proximity(self, crane_a, crane_b, threshold=10.0):
         """
@@ -54,6 +58,9 @@ class AlarmManager:
             self.active_alarms[tag_id][alarm_type] = True
             print(f"ALARM: {message} for {tag_id}")
             # Add code to send the alarm information, e.g., logging or sending notifications
+            timestamp = time.time()
+            alert_name = alarm_type
+            self.tag_manager.add_alert(tag_id, alert_name, message, timestamp)
         return True
 
     def reset_alarm(self, tag_id, alarm_type):

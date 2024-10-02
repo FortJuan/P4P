@@ -56,12 +56,13 @@ class TagManager:
         """Retrieve the tag type for a given serial number."""
         return self.data['tags'].get(serial_number, {}).get('tag_type', None)
     
-    def add_alert(self, alert_name, alert_message, timestamp):
+    def add_alert(self, tag_id, alert_name, alert_message, timestamp):
         #with self.lock:
             # Ensure 'alerts' key exists
             if 'alerts' not in self.data:
                 self.data['alerts'] = []
             self.data['alerts'].append({
+                "tag_id": tag_id,
                 "name": alert_name,
                 "message": alert_message,
                 "timestamp": timestamp

@@ -18,28 +18,47 @@
             "tag_type": "Crane",
             "battery": 50,
             "location": [
-                71.99430379746835,
-                28.75094339622642,
-                3.8988888888888904
+                57.802215189873415,
+                28.67924528301887,
+                4.194444444444443
             ],
-            "timestamp": 1726451158.025
+            "timestamp": 1726451244.944
         },
         "0x001A2C": {
             "tag_type": "Operator",
             "battery": 50,
             "location": [
-                38.91075949367089,
-                29.539622641509435,
-                3.7511111111111117
+                53.948734177215194,
+                13.622641509433961,
+                4.637777777777776
             ],
-            "timestamp": 1726451158.07
+            "timestamp": 1726451244.862
         }
     },
     "alerts": [
         {
-            "name": "Hazard Alert",
+            "tag_id": "0x000EBC",
+            "name": "Hazard Alert 1",
             "message": "Forklift entered restricted zone",
             "timestamp": "2024-05-02T16:04:03Z"
+        },
+        {
+            "tag_id": "0x001A79",
+            "name": "Hazard Alert 2",
+            "message": "Forklift entered restricted zone",
+            "timestamp": "2024-05-02T16:04:03Z"
+        },
+        {
+            "tag_id": "0x000EBC",
+            "name": "geofence",
+            "message": "Entered geofence zone",
+            "timestamp": 1727867180.1669202
+        },
+        {
+            "tag_id": "0x001A2C",
+            "name": "geofence",
+            "message": "Entered geofence zone",
+            "timestamp": 1727867213.3219185
         }
     ]
 }
