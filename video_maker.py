@@ -15,7 +15,8 @@ def convert_plot_to_frame():
     img = Image.open(buf)
     
     # Convert the image to a format suitable for video (e.g., BGR for OpenCV)
-    frame = img.convert('RGB')
+    frame = np.array(img.convert('RGB'))  # Convert PIL image to RGB NumPy array
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR (OpenCV format)
     return frame
 
 import cv2
@@ -34,6 +35,7 @@ class VideoWriterState:
         self.fps = fps
         self.frame_size = frame_size
         self.video_writer = None
+        self.last_frame_time = None  # Track when the last frame was added
     
     def initialize_writer(self):
         """
@@ -46,7 +48,6 @@ class VideoWriterState:
         # Initialize video writer with the given parameters
         fourcc = cv2.VideoWriter_fourcc(*self.codec)  # Codec, e.g., 'XVID' or 'mp4v'
         self.video_writer = cv2.VideoWriter(self.output_file, fourcc, self.fps, self.frame_size)
-
 
     def release(self):
         """Releases the video writer."""
@@ -64,7 +65,23 @@ def add_frame(frame, video_writer_state):
         video_writer_state.frame_size = (frame_np.shape[1], frame_np.shape[0])  # Set frame size on first frame
 
     frame_resized = cv2.resize(frame_np, video_writer_state.frame_size)  # Resize the frame
-    video_writer_state.video_writer.write(frame_resized)  # Add the frame to the video
+    
+    current_time = time.time()
+    
+    # Handle holding frames for real-time playback
+    if video_writer_state.last_frame_time is not None:
+        elapsed_time = current_time - video_writer_state.last_frame_time
+        target_time_per_frame = 1 / video_writer_state.fps
+        
+        num_repeats = max(1, int(elapsed_time / target_time_per_frame))
+    else:
+        num_repeats = 1  # First frame, no repeats needed
+    
+    # Write the frame multiple times to hold for real-time
+    for _ in range(num_repeats):
+        video_writer_state.video_writer.write(frame_resized)
+    
+    video_writer_state.last_frame_time = current_time  # Update last frame time
 
 def release_video_writer(video_state: VideoWriterState):
     """Releases the video writer state."""

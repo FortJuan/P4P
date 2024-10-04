@@ -2,9 +2,14 @@ from plot_coordinates import get_sequence_data  # Import the function from plot_
 from alarms import AlarmManager
 from video_maker import VideoWriterState, release_video_writer
 import json
+import os
 
 # Define the video parameters
 output_file = "output_video.mp4"
+if os.path.exists(output_file):
+    os.remove(output_file)  # Delete the existing video file
+
+
 codec = 'mp4v'  # Codec, e.g., 'mp4v' or 'XVID'
 fps = 30        # Frames per second
 frame_size = (640, 480)  # Example frame size, should match plot size
