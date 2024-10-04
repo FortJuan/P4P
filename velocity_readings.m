@@ -13,7 +13,7 @@ tag_ids = data.Tag_ID;
 timestamps = data.Timestamp_s;
 velocities = data.Velocity_kmph;
 
-% Get the unique tag IDs
+% Get unique tag IDs
 unique_tags = unique(tag_ids);
 
 % Prepare a color map for the tags
