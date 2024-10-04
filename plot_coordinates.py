@@ -12,6 +12,10 @@ import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import os
 import json
+from video_maker import add_frame
+from video_maker import convert_plot_to_frame
+
+
 
 # Helper function to plot crane barriers
 def plotCraneBarrier(ax, tag_id, tag_type, x, y, z, crane_plots):
@@ -92,7 +96,7 @@ def plot_icons(ax, tag_type, x, y, zoom):
     ab = AnnotationBbox(imagebox, (x, y), frameon=False)
     ax.add_artist(ab)
 
-def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=False):
+def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=False, video_writer_state=None):
     """
     Plot tag coordinates on a 2D graph with real-time animation and save as a GIF.
     
@@ -254,5 +258,10 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
         #writer.grab_frame()
         #ax.cla()  # Clear the axis for the next frame
 
-    plt.show()
-    #plt.close(fig)
+    #plt.show()
+    # Convert the plot to a frame and add it to the video if video_writer_state is provided
+    if video_writer_state is not None:
+        # Convert the plot to a frame (example using plt)
+        frame = convert_plot_to_frame()  # A function that captures the plot as an image
+        add_frame(frame, video_writer_state)  # Add the frame to the video
+    plt.close(fig)

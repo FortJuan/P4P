@@ -1,6 +1,18 @@
 from plot_coordinates import get_sequence_data  # Import the function from plot_coordinates.py
 from alarms import AlarmManager
+from video_maker import VideoWriterState, release_video_writer
 import json
+
+# Define the video parameters
+output_file = "output_video.mp4"
+codec = 'mp4v'  # Codec, e.g., 'mp4v' or 'XVID'
+fps = 30        # Frames per second
+frame_size = (640, 480)  # Example frame size, should match plot size
+
+# Initialize VideoWriterState
+video_writer_state = VideoWriterState(output_file, codec, fps, frame_size)
+video_writer_state.initialize_writer()  # Initialize the writer before use
+
 
 def check_dependencies():
     """
@@ -301,7 +313,7 @@ def main():
             else:
                 break
         # Plot a single plot with the updated coordinate data
-        plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=True)
+        plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, initial_time, initial_coordinate_time, toggle_names=True, video_writer_state=video_writer_state)
 
         # Reupdate sequence and tag information within main.py
         data_json_path = os.path.join(os.getcwd(), "data.json")
@@ -317,8 +329,12 @@ def main():
         #print(f"Cranes: {cranes}")
         #print(f"Geofence Zones: {geofence_zones}")
 
-        input("Press Enter to continue...")
+        #input("Press Enter to continue...")
         #break
+
+    # Release the video writer once the plotting is complete
+    release_video_writer(video_writer_state)
+    print ("Run complete\n")    
 
 if __name__ == '__main__':
     main()

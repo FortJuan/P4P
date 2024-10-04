@@ -1,3 +1,15 @@
+import csv
+import time
+
+def add_timestamp():
+    # Get the current time as a Unix timestamp
+    current_time_unix = int(time.time())
+    
+    # Open the CSV file in append mode and add the timestamp to a new line
+    with open('hazard_times.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([current_time_unix])
+
 class AlarmManager:
     def __init__(self):
         # Store active alarms to avoid duplicates (keyed by tag_id and alarm_type)
@@ -54,6 +66,7 @@ class AlarmManager:
             self.active_alarms[tag_id][alarm_type] = True
             print(f"ALARM: {message} for {tag_id}")
             # Add code to send the alarm information, e.g., logging or sending notifications
+            add_timestamp()
         return True
 
     def reset_alarm(self, tag_id, alarm_type):
