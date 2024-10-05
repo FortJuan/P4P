@@ -2,11 +2,31 @@ clear;
 clc;
 
 % Initialize an array to store hazard timestamps (in seconds)
-hazard_timestamps = [5,10,14,33,55,69,80,88,108,115,130];
+%hazard_timestamps = [5,10,14,33,55,69,80,88,108,115,130];
 
 % Example: You can manually add timestamps or dynamically generate them.
 % This will simulate adding hazards occurring at different times (in seconds).
 %hazard_timestamps = [5, 15, 25, 35, 45, 65, 85, 105, 125, 145, 165, 180, 200, 220];
+
+% Read hazard times from the CSV file
+filename = 'hazard_times.csv';
+
+% Load the timestamps from the CSV file
+hazard_timestamps_unix = csvread(filename);
+
+% Use the first timestamp as the start time (time = 0), but exclude it from the hazard timestamps
+start_time = hazard_timestamps_unix(1);  % First timestamp is the start time
+
+% Remove the first timestamp (start time) from the list of hazard timestamps
+hazard_timestamps_unix = hazard_timestamps_unix(2:end);
+
+% Convert from UNIX timestamps to relative times (seconds from the start time)
+hazard_timestamps = hazard_timestamps_unix - start_time;
+
+% Display the converted hazard timestamps
+disp('Hazard timestamps (in seconds from start):');
+disp(hazard_timestamps);
+
 
 % Define time range bins for the histogram (adjust according to your needs)
 time_bins = 0:20:240; % Example: 0 to 240 seconds, with 20-second intervals

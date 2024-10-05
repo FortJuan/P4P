@@ -67,10 +67,11 @@ class AlarmManager:
             self.active_alarms[tag_id][alarm_type] = True
             print(f"ALARM: {message} for {tag_id}")
             # Add code to send the alarm information, e.g., logging or sending notifications
-            add_timestamp()
+            #add_timestamp()
             timestamp = time.time()
             alert_name = alarm_type
             self.tag_manager.add_alert(tag_id, alert_name, message, timestamp)
+            
         return True
 
     def reset_alarm(self, tag_id, alarm_type):
@@ -99,27 +100,31 @@ class AlarmManager:
         for tag_id, tag in tags.items():
             tag_type = tag['tag_type']
 
-            # Sequence: Steelmaking Sequence
-            if sequence_name == "Steelmaking Sequence":
+        # Check Forklift and Operator proximity (3 meters)
+        for other_tag_id, other_tag in tags.items():
+            if other_tag_id != tag_id and other_tag['tag_type'] == "Operator":
+                if self.check_forklift_operator_proximity(tag, other_tag):
+                    self.trigger_alarm(tag_id, "forklift_operator_proximity", 
+                        f"Forklift {tag_id} is too close to Operator {other_tag_id}")
+
+
+
+            # Sequence: Steelmaking Sequence and Tandem Lift
+            if sequence_name != "Bricklayers Lift":
                 if tag_type in ["Operator", "Forklift"]:
                     if self.check_geofence(tag, geofence_zones):
                         self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
                     if self.check_crane_zone(tag, cranes):
                         self.trigger_alarm(tag_id, "crane_zone", "Entered crane zone")
                     
-                    # Check Forklift and Operator proximity (3 meters)
-                    for other_tag_id, other_tag in tags.items():
-                        if other_tag_id != tag_id and other_tag['tag_type'] == "Operator":
-                            if self.check_forklift_operator_proximity(tag, other_tag):
-                                self.trigger_alarm(tag_id, "forklift_operator_proximity", 
-                                    f"Forklift {tag_id} is too close to Operator {other_tag_id}")
+
 
             # Sequence: Tandem Lift (cranes can be close)
-            elif sequence_name == "Tandem Lift":
-                if tag_type in ["Operator", "Forklift"]:
-                    if self.check_geofence(tag, geofence_zones):
-                        self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
-                    # No crane proximity alarms
+            #elif sequence_name == "Tandem Lift":
+            #    if tag_type in ["Operator", "Forklift"]:
+            #        if self.check_geofence(tag, geofence_zones):
+            #            self.trigger_alarm(tag_id, "geofence", "Entered geofence zone")
+            #        # No crane proximity alarms
 
             # Sequence: Bricklayers Lift (operators can be in crane zone)
             elif sequence_name == "Bricklayers Lift":

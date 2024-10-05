@@ -8,22 +8,35 @@
             "tag_type": "Crane",
             "battery": 50,
             "location": [
-                72.37025316455697,
-                29.25283018867925,
-                3.7511111111111117
+                36.18512658227848,
+                31.403773584905665,
+                4.046666666666665
             ],
-            "timestamp": 1726451163.178
+            "timestamp": 1726451306.266
         },
         "0x001A2C": {
             "tag_type": "Operator",
             "battery": 50,
             "location": [
-                4.699367088607597,
-                23.732075471698113,
-                6.411111111111111
+                37.312974683544304,
+                31.833962264150948,
+                3.16
             ],
-            "timestamp": 1726451163.089
+            "timestamp": 1726451307.023
         }
     },
-    "alerts": []
+    "alerts": [
+        {
+            "tag_id": "0x001A2C",
+            "name": "geofence",
+            "message": "Entered geofence zone",
+            "timestamp": 1728072672.844551
+        },
+        {
+            "tag_id": "0x001A2C",
+            "name": "crane_zone",
+            "message": "Entered crane zone",
+            "timestamp": 1728072688.696153
+        }
+    ]
 }
