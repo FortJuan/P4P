@@ -17,50 +17,33 @@ import json
 from video_maker import add_frame
 from video_maker import convert_plot_to_frame
 
-def plot_alerts(ax, alerts, tag_data):
-    """
-    Plot alert messages on the graph at the bottom, ensuring each new alert is placed above the previous without overlap.
-
-    Args:
-    ax (matplotlib.axes.Axes): The axis object to plot on.
-    alerts (list of dicts): List of alerts to plot, sorted from newest to oldest.
-    tag_data (dict): Dictionary containing tag details.
-    """
-    # Define the vertical space each alert will occupy
-    alert_height = 0.05
-    alert_spacing = 0.01  # space between alerts
-    alert_area_height = 4 * (alert_height + alert_spacing)  # total area to display alerts
-
-    # Determine the number of alerts to display (up to 4)
-    num_alerts_to_display = min(len(alerts), 4)
-
-    # Calculate the starting y position for the first alert, placed at the bottom of the plot
-    y_start = ax.get_ylim()[0] + alert_spacing  # start just above the bottom axis limit
-
-    # Adjust figure to fit alert area without resizing existing plot content
-    fig = plt.gcf()
-    fig.subplots_adjust(bottom=0.2)  # increase bottom margin to accommodate alerts
-
-    # Iterate through the alerts to display, creating a visual stack
-    for idx, alert in enumerate(alerts[:num_alerts_to_display]):
+def plot_alerts(ax, data_json_path):
+    # Load alerts data from JSON file
+    with open(data_json_path, 'r') as file:
+        data = json.load(file)
+    alerts = data['alerts']
+    tags = data['tags']
+    
+    # Sort alerts by timestamp, newest first
+    alerts.sort(key=lambda x: x['timestamp'], reverse=True)
+    
+    # Determine where to place the first alert box
+    # Set some starting coordinates for the alerts below the plot
+    start_x, start_y = 0.01, -0.09  # Coordinates normalized to axes (left, bottom)
+    spacing = 0.08  # Space between boxes
+    
+    # Loop through alerts and create boxes
+    for i, alert in enumerate(alerts):
         tag_id = alert['tag_id']
-        tag_type = tag_data.get(tag_id, {}).get('tag_type', 'Unknown')
+        tag_type = tags[tag_id]['tag_type']
         message = f"{tag_type} ({tag_id}): {alert['message']}"
+        # Create a text box for each alert
+        text_box = TextArea(message, textprops=dict(color='red', fontsize=10, weight='bold'))
+        abox = AnnotationBbox(text_box, (start_x, start_y - i * spacing), xycoords='axes fraction', boxcoords="axes fraction", box_alignment=(0,1), frameon=True, pad=0.5, bboxprops=dict(facecolor='lightgray', edgecolor='none', alpha=0.5))
+        ax.add_artist(abox)
 
-        # Calculate y position for this alert
-        alert_y_position = y_start + idx * (alert_height + alert_spacing)
-
-        # Create a rectangle for the alert background
-        rect = Rectangle((ax.get_xlim()[0], alert_y_position), ax.get_xlim()[1] - ax.get_xlim()[0], alert_height,
-                         color='lightgray', alpha=0.5, zorder=2)
-        ax.add_patch(rect)
-
-        # Add text on top of the rectangle
-        ax.text(ax.get_xlim()[0] + 0.01, alert_y_position + alert_height / 2, message, color='red',
-                fontweight='bold', verticalalignment='center', horizontalalignment='left', zorder=3)
-
-    # Redraw the plot to update the changes
-    plt.draw()
+    # Adjust the plot area to make space for alerts
+    plt.subplots_adjust(bottom=0.29)
 
 # Helper function to plot crane barriers
 def plotCraneBarrier(ax, tag_id, tag_type, x, y, z, crane_plots):
@@ -302,9 +285,9 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
         # Grab the current frame for the GIF
         #writer.grab_frame()
         #ax.cla()  # Clear the axis for the next frame
-    #data_json_path = os.path.join(os.getcwd(), "data.json")
-    #plot_alerts(ax, data_json_path)
-    plot_alerts(ax, tag_manager.data['alerts'], tag_manager.data['tags'])
+    data_json_path = os.path.join(os.getcwd(), "data.json")
+    plot_alerts(ax, data_json_path)
+    #plot_alerts(ax, tag_manager.data['alerts'], tag_manager.data['tags'])
     
     #plt.show()
     # Convert the plot to a frame and add it to the video if video_writer_state is provided
