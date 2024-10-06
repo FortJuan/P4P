@@ -79,6 +79,12 @@ class TagManager:
             self.data['alerts'] = []
             self.save_data()
 
+    def remove_alert(self, tag_id, alert_name):
+        # Removes specific alerts from the JSON data
+        self.data['alerts'] = [alert for alert in self.data['alerts']
+                               if not (alert['tag_id'] == tag_id and alert['name'] == alert_name)]
+        self.save_data()
+    
     def remove_tags(self):
         """
         Removes all tags from the JSON file.
