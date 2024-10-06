@@ -30,13 +30,13 @@
             "tag_id": "0x001A2C",
             "name": "geofence",
             "message": "Entered geofence zone",
-            "timestamp": 1728072672.844551
+            "timestamp": 1728221231.425255
         },
         {
             "tag_id": "0x001A2C",
             "name": "crane_zone",
             "message": "Entered crane zone",
-            "timestamp": 1728072688.696153
+            "timestamp": 1728221247.4217668
         }
     ]
 }

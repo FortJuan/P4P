@@ -9,13 +9,37 @@ from sequence import Sequence
 from PIL import Image
 from tag import Tag
 import numpy as np
-from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+from matplotlib.offsetbox import TextArea, DrawingArea, OffsetImage, AnnotationBbox
+from alarms import AlarmManager
 import os
 import json
 from video_maker import add_frame
 from video_maker import convert_plot_to_frame
 
+def plot_alerts(ax, data_json_path):
+    # Load alerts data from JSON file
+    with open(data_json_path, 'r') as file:
+        data = json.load(file)
+    alerts = data['alerts']
+    
+    # Sort alerts by timestamp, newest first
+    alerts.sort(key=lambda x: x['timestamp'], reverse=True)
+    
+    # Determine where to place the first alert box
+    # Set some starting coordinates for the alerts below the plot
+    start_x, start_y = 0.01, -0.05  # Coordinates normalized to axes (left, bottom)
+    spacing = 0.04  # Space between boxes
+    
+    # Loop through alerts and create boxes
+    for i, alert in enumerate(alerts):
+        message = f"{alert['name'].capitalize()}: {alert['message']}"
+        # Create a text box for each alert
+        text_box = TextArea(message, textprops=dict(color='red', fontsize=10, weight='bold'))
+        abox = AnnotationBbox(text_box, (start_x, start_y - i * spacing), xycoords='axes fraction', boxcoords="axes fraction", box_alignment=(0,1), frameon=True, pad=0.5, bboxprops=dict(facecolor='lightgray', edgecolor='none', alpha=0.5))
+        ax.add_artist(abox)
 
+    # Adjust the plot area to make space for alerts
+    plt.subplots_adjust(bottom=0.2)
 
 # Helper function to plot crane barriers
 def plotCraneBarrier(ax, tag_id, tag_type, x, y, z, crane_plots):
@@ -257,7 +281,9 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
         # Grab the current frame for the GIF
         #writer.grab_frame()
         #ax.cla()  # Clear the axis for the next frame
-
+    data_json_path = os.path.join(os.getcwd(), "data.json")
+    plot_alerts(ax, data_json_path)
+    
     #plt.show()
     # Convert the plot to a frame and add it to the video if video_writer_state is provided
     if video_writer_state is not None:
