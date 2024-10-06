@@ -57,7 +57,6 @@ class TagManager:
         return self.data['tags'].get(serial_number, {}).get('tag_type', None)
     
     def add_alert(self, tag_id, alert_name, alert_message, timestamp):
-        #with self.lock:
             # Ensure 'alerts' key exists
             if 'alerts' not in self.data:
                 self.data['alerts'] = []
@@ -67,7 +66,6 @@ class TagManager:
                 "message": alert_message,
                 "timestamp": timestamp
             })
-            #self.purge_old_alerts()
             self.save_data()
     
     def purge_old_alerts(self):

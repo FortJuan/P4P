@@ -233,7 +233,7 @@ def plot_coordinates(coordinate_data, xLow, xHigh, yLow, yHigh, zLow, zHigh, ini
                 # Ensure only "Crane" tag_type calls the function
                 if tag_type == "Crane":
                     zoom = 0.15
-                    print("Plotting Crane circle \n")
+                    #print("Plotting Crane circle \n")
                     # If the tag is a crane, plot the crane barrier
                     plotCraneBarrier(ax, serial, tag_type, x_last, y_last, z_last, crane_plots)
 
