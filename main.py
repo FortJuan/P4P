@@ -223,7 +223,7 @@ def main():
     sequence_data = load_json_data(file_path)
 
     # Select the dataset and sequence (change these values to your actual selection)
-    selected_data_set = "Dataset 1"  # You can dynamically select this based on user input or logic
+    selected_data_set = "Dataset 6"  # You can dynamically select this based on user input or logic
     selected_sequence = "Steelmaking Sequence"  # Example sequence name
 
     dataset_path, quadrilaterals, colour = get_sequence_data(sequence_data, selected_sequence, selected_data_set)
@@ -283,6 +283,8 @@ def main():
     #tag1 = Tag("Forklift", "0x000EBC", 85.5, (10, 20, 5), coordinate_data[0][6])
     tag3 = Tag("Operator", "0x001A2C", 75.3, (20, 30, 5), coordinate_data[0][6])
     tag2 = Tag("Crane", "0x001A79", 90.0, (15, 25, 5), coordinate_data[1][6])
+    tag4 = Tag("Forklift", "0x001A4D", 90.0, (15, 25, 5), coordinate_data[2][6])
+    tag5 = Tag("Operator", "0x001A3E", 90.0, (15, 25, 5), coordinate_data[3][6])
     
 
     print("\nI addded a path\n")
@@ -292,6 +294,8 @@ def main():
     #tag_manager.add_or_update_tag(tag1)
     tag_manager.add_or_update_tag(tag2)
     tag_manager.add_or_update_tag(tag3)
+    tag_manager.add_or_update_tag(tag4)
+    tag_manager.add_or_update_tag(tag5)
     
     tag_manager.remove_alerts()
     #tag_manager.add_alert(tag1.get_tag_id(),"Hazard Alert 1", "Forklift entered restricted zone", "2024-05-02T16:04:03Z")

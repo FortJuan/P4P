@@ -5,6 +5,9 @@
         },
         "Dataset 2": {
             "path": "coord_log (1).log"
+        },
+        "Dataset 6": {
+            "path": "dataset_6.log"
         }
     },
     "sequence": {

@@ -9,10 +9,10 @@
             "battery": 50,
             "location": [
                 36.18512658227848,
-                31.403773584905665,
+                31.47547169811321,
                 4.046666666666665
             ],
-            "timestamp": 1726451306.266
+            "timestamp": 1726451307.244
         },
         "0x001A2C": {
             "tag_type": "Operator",
@@ -23,6 +23,26 @@
                 3.16
             ],
             "timestamp": 1726451307.023
+        },
+        "0x001A4D": {
+            "tag_type": "Forklift",
+            "battery": 50,
+            "location": [
+                29.042088607594938,
+                23.230188679245284,
+                5.967777777777777
+            ],
+            "timestamp": 1726451307.146
+        },
+        "0x001A3E": {
+            "tag_type": "Operator",
+            "battery": 50,
+            "location": [
+                45.58386075949367,
+                23.086792452830192,
+                3.012222222222223
+            ],
+            "timestamp": 1726451307.142
         }
     },
     "alerts": [
@@ -30,7 +50,19 @@
             "tag_id": "0x001A2C",
             "name": "crane_zone",
             "message": "Entered crane zone",
-            "timestamp": 1728226293.9493449
+            "timestamp": 1728383562.7751236
+        },
+        {
+            "tag_id": "0x001A3E",
+            "name": "geofence",
+            "message": "Entered geofence zone",
+            "timestamp": 1728383576.376016
+        },
+        {
+            "tag_id": "0x001A4D",
+            "name": "geofence",
+            "message": "Entered geofence zone",
+            "timestamp": 1728383576.685862
         }
     ]
 }
