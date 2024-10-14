@@ -226,6 +226,9 @@ def main():
     selected_data_set = "Dataset 6"  # You can dynamically select this based on user input or logic
     selected_sequence = "Steelmaking Sequence"  # Example sequence name
 
+    # Update settings if needed
+    tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
+
     dataset_path, quadrilaterals, colour = get_sequence_data(sequence_data, selected_sequence, selected_data_set)
 
     
@@ -244,8 +247,7 @@ def main():
     
     
     
-    # Update settings if needed
-    tag_manager.update_settings(selected_data_set="Dataset 2", selected_sequence="Steelmaking Sequence")
+    
 
     # Load updated settings
     selected_data_set = tag_manager.data['settings'].get('selected_data_set', 'Default Dataset')

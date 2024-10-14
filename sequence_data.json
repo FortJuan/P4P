@@ -6,6 +6,15 @@
         "Dataset 2": {
             "path": "coord_log (1).log"
         },
+        "Dataset 3": {
+            "path": "dataset_3.log"
+        },
+        "Dataset 4": {
+            "path": "dataset_4.log"
+        },
+        "Dataset 5": {
+            "path": "dataset_5.log"
+        },
         "Dataset 6": {
             "path": "dataset_6.log"
         }
@@ -57,7 +66,7 @@
                     [62.90, 30.50]
                 ]
             ],
-            "colour": "Red"
+            "colour": "Green"
         },
         "Bricklayers Lift": {
             "quadrilaterals": 
@@ -69,19 +78,13 @@
                     [0.90, 26.20]
                 ], 
                 [
-                    [22.00, 15.20], 
-                    [50.00, 15.20], 
-                    [50.00, 23.60], 
-                    [22.00, 23.60]
-                ],
-                [
-                    [62.90, 19.10], 
-                    [74.00, 19.10], 
-                    [74.00, 30.50], 
-                    [62.90, 30.50]
+                    [5.30, 15.40], 
+                    [50.40, 15.40], 
+                    [50.40, 23.40], 
+                    [5.3, 23.40]
                 ]
             ],
-            "colour": "Red"
+            "colour": "Blue"
         }
     }
 }
